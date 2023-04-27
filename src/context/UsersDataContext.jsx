@@ -2,17 +2,19 @@ import React, { createContext, useReducer } from "react";
 
 export const UserContext = createContext();
 const initialState = {
-  name: "",
-  userName: "",
-  dateOfBirthDay: "",
-  skills: [],
+  users: [],
 };
 
 const dataReducer = (state, action) => {
   switch (action.type) {
+    case "add":
+      const users = state.users;
+      return { users: [...users, action.payload] };
+    case "firstTime":
+      return action.payload;
     case "update":
-      return { state, log: "hollo" };
-
+      const userss = state.users;
+        return { users: [...userss, action.payload] };
     default:
       return state;
   }

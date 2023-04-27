@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, ModalFooter } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../context/UsersDataContext";
 
-const ModalComponent = () => {
+const Edit = ({ id }) => {
+  const [show, setShow] = useState(false);
   const { state, dispatch } = useContext(UserContext);
   const [data, setData] = useState({
     name: "",
@@ -11,11 +12,44 @@ const ModalComponent = () => {
     dateOfBirthDay: "",
     skills: [],
   });
+  const [skills, setSkills] = useState({});
 
-  const [show, setShow] = useState(false);
+  const selectedUser = state.users.find((user) => user.id === id);
+  console.log(selectedUser);
+
+  const getSkills = () => {
+    // const skills= selectedUser.skills.map(skill => skill)
+    let skill = {};
+    for (let i of selectedUser.skills) {
+      skill = { ...skill, [i]: true };
+    }
+    console.log(skill);
+    setSkills(skill);
+    // return skill;
+  };
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const changeHandler = (e) => {
+    // if (e.target.  const skills = data.skills;
+    //   setData({
+    //     ...data,
+    //     skills: [...skills, e.target.name],
+    //     id: getId(),
+    //   });
+    //   return;
+    // }
+    // console.log(e);
+    // setData({
+    //   ...data,
+    //   [e.target.name]: e.target.value,
+    //   id: getId(),
+    // });
+
+
+    setData({ ...selectedUser, [e.target.name]: e.target.value });
+  };
 
   const getId = () => {
     if (state.users.length === 0) {
@@ -27,58 +61,33 @@ const ModalComponent = () => {
     }
   };
 
-  const changeHandler = (e) => {
-    if (e.target.checked) {
-      const skills = data.skills;
-      setData({
-        ...data,
-        skills: [...skills, e.target.name],
-        id: getId(),
-      });
-      return;
-    // } else if (!e.target.checked) {
-    //   const skills = data.skills;
-    //   const newSkills = skills.map((skill) => skill === skills.includes(!e.target.name));
-    }
-    // console.log(e);
-    setData({
-      ...data,
-      [e.target.name]: e.target.value,
-      id: getId(),
-    });
-  };
-
   const dispatchHandler = () => {
     // setData({ ...data, id: getId() });
     console.log(data);
-    if (
-      data.dateOfBirthDay &&
-      data.lastName &&
-      data.name &&
-      data.skills.length
-    ) {
-      dispatch({ type: "add", payload: data });
-      if (localStorage.getItem("data")) {
-        const users = JSON.parse(localStorage.getItem("data"));
-        // console.log(...users.users);
-        localStorage.setItem(
-          "data",
-          JSON.stringify({ users: [...users.users, data] })
-        );
-        handleClose();
-        return;
-      }
+    dispatch({ type: "add", payload: data });
+    if (localStorage.getItem("data")) {
+      const users = JSON.parse(localStorage.getItem("data"));
+      // console.log(...users.users);
+      localStorage.setItem(
+        "data",
+        JSON.stringify({ users: [...users.users, data] })
+      );
+      handleClose();
+      return;
     }
 
     localStorage.setItem("data", JSON.stringify({ users: [data] }));
     handleClose();
   };
 
-  // console.log(state);
+  useEffect(() => {
+    getSkills();
+  }, [data.skills.length]);
+
   return (
-    <div className="d-flex justify-content-center">
-      <Button variant="primary" onClick={handleShow}>
-        کاربر جدید
+    <div>
+      <Button variant="warning" onClick={handleShow}>
+        ویرایش
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -92,6 +101,7 @@ const ModalComponent = () => {
               type="text"
               name="name"
               onChange={changeHandler}
+              value={selectedUser.name}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -101,6 +111,7 @@ const ModalComponent = () => {
               type="text"
               name="lastName"
               onChange={changeHandler}
+              value={selectedUser.lastName}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -110,6 +121,7 @@ const ModalComponent = () => {
               type="date"
               name="dateOfBirthDay"
               onChange={changeHandler}
+              value={selectedUser.dateOfBirthDay}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -122,6 +134,7 @@ const ModalComponent = () => {
                   name="html"
                   id="html"
                   onChange={changeHandler}
+                  checked={skills.html}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -131,6 +144,7 @@ const ModalComponent = () => {
                   name="javascript"
                   id="javascript"
                   onChange={changeHandler}
+                  checked={skills.javascript}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -140,6 +154,7 @@ const ModalComponent = () => {
                   name="react"
                   id="react"
                   onChange={changeHandler}
+                  checked={skills.react}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -149,14 +164,15 @@ const ModalComponent = () => {
                   name="next"
                   id="next"
                   onChange={changeHandler}
+                  checked={skills.next}
                 />
               </div>
             </div>
           </div>
         </Modal.Body>
         <ModalFooter>
-          <Button variant="success" onClick={dispatchHandler}>
-            ایجاد کاربر
+          <Button variant="warning" onClick={dispatchHandler}>
+            ویرایش
           </Button>
           <Button variant="secondary" onClick={handleClose}>
             بازگشت
@@ -167,4 +183,4 @@ const ModalComponent = () => {
   );
 };
 
-export default ModalComponent;
+export default Edit;
