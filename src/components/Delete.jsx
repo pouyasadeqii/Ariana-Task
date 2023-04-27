@@ -7,7 +7,7 @@ const Delete = ({ id }) => {
 
   const deleteHandler = () => {
     const selectedUser = state.users.filter((user) => user.id !== id);
-    dispatch({ type: "update", payload: selectedUser });
+    dispatch({ type: "delete", payload: selectedUser });
     const users = JSON.parse(localStorage.getItem("data"));
     console.log(users.users);
     const selectedUserLocal = users.users.filter((user) => user.id !== id);

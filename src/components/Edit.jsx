@@ -4,85 +4,93 @@ import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../context/UsersDataContext";
 
 const Edit = ({ id }) => {
-  const [show, setShow] = useState(false);
   const { state, dispatch } = useContext(UserContext);
-  const [data, setData] = useState({
+  const [show, setShow] = useState(false);
+  const [allSkills, setAllSkills] = useState({
+    javascript: false,
+    react: false,
+    next: false,
+    html: false,
+  });
+  const [updatedUser, setUpdatedUser] = useState({
     name: "",
     lastName: "",
     dateOfBirthDay: "",
     skills: [],
   });
+  // selected user=========================
+  const selectedUser = state.users.find((user) => user.id === id);
+  // console.log(selectedUser);
+
   const [skills, setSkills] = useState({});
 
-  const selectedUser = state.users.find((user) => user.id === id);
-  console.log(selectedUser);
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    setShow(true);
+    getSkills();
+    setUpdatedUser(selectedUser);
+  };
 
   const getSkills = () => {
-    // const skills= selectedUser.skills.map(skill => skill)
     let skill = {};
     for (let i of selectedUser.skills) {
       skill = { ...skill, [i]: true };
     }
-    console.log(skill);
     setSkills(skill);
-    // return skill;
   };
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   const changeHandler = (e) => {
-    // if (e.target.  const skills = data.skills;
-    //   setData({
-    //     ...data,
-    //     skills: [...skills, e.target.name],
-    //     id: getId(),
-    //   });
-    //   return;
-    // }
-    // console.log(e);
-    // setData({
-    //   ...data,
-    //   [e.target.name]: e.target.value,
-    //   id: getId(),
-    // });
-
-
-    setData({ ...selectedUser, [e.target.name]: e.target.value });
+    setUpdatedUser({ ...updatedUser, [e.target.name]: e.target.value });
   };
 
-  const getId = () => {
-    if (state.users.length === 0) {
-      return 1;
-    } else {
-      const selectedUser = state.users[state.users.length - 1];
-      const id = Number(selectedUser.id) + 1;
-      return id;
+  const checkedHandler = (e) => {
+    const userOldSkills = selectedUser.skills;
+    if (e.target.checked) {
+      if (!updatedUser.skills.includes(e.target.name)) {
+        setSkills({ ...skills, [e.target.name]: true });
+        const skillsKeys = Object.keys(skills);
+        setUpdatedUser({
+          ...updatedUser,
+          skills: [...skillsKeys, e.target.name],
+        });
+      }
+      return;
+    } else if (!e.target.checked) {
+      const userSkills = { ...skills };
+      delete userSkills[e.target.name];
+      setSkills(userSkills);
+      const allSkills = updatedUser.skills;
+      const newSkills = allSkills.filter((skill) => skill !== e.target.name);
+      setUpdatedUser({
+        ...updatedUser,
+        skills: newSkills,
+      });
+      return;
     }
   };
 
+  console.log(skills);
+  console.log(updatedUser.skills);
+
   const dispatchHandler = () => {
-    // setData({ ...data, id: getId() });
-    console.log(data);
-    dispatch({ type: "add", payload: data });
+    const filterdUser = state.users.filter((user) => user.id !== id);
+    setUpdatedUser({ ...updatedUser, id: selectedUser.id });
+    dispatch({ type: "edit", payload: [...filterdUser, updatedUser] });
+    console.log(updatedUser);
     if (localStorage.getItem("data")) {
       const users = JSON.parse(localStorage.getItem("data"));
-      // console.log(...users.users);
+      console.log(...users.users);
       localStorage.setItem(
         "data",
-        JSON.stringify({ users: [...users.users, data] })
+        JSON.stringify({ users: [...filterdUser, updatedUser] })
       );
       handleClose();
       return;
     }
 
-    localStorage.setItem("data", JSON.stringify({ users: [data] }));
-    handleClose();
+    // localStorage.setItem("data", JSON.stringify({ users: [data] }));
+    // handleClose();
   };
-
-  useEffect(() => {
-    getSkills();
-  }, [data.skills.length]);
 
   return (
     <div>
@@ -101,7 +109,7 @@ const Edit = ({ id }) => {
               type="text"
               name="name"
               onChange={changeHandler}
-              value={selectedUser.name}
+              value={updatedUser.name}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -111,7 +119,7 @@ const Edit = ({ id }) => {
               type="text"
               name="lastName"
               onChange={changeHandler}
-              value={selectedUser.lastName}
+              value={updatedUser.lastName}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -121,7 +129,7 @@ const Edit = ({ id }) => {
               type="date"
               name="dateOfBirthDay"
               onChange={changeHandler}
-              value={selectedUser.dateOfBirthDay}
+              value={updatedUser.dateOfBirthDay}
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -133,8 +141,8 @@ const Edit = ({ id }) => {
                   type="checkbox"
                   name="html"
                   id="html"
-                  onChange={changeHandler}
-                  checked={skills.html}
+                  onChange={checkedHandler}
+                  checked={false || skills.html}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -143,8 +151,8 @@ const Edit = ({ id }) => {
                   type="checkbox"
                   name="javascript"
                   id="javascript"
-                  onChange={changeHandler}
-                  checked={skills.javascript}
+                  onChange={checkedHandler}
+                  checked={false || skills.javascript}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -153,8 +161,8 @@ const Edit = ({ id }) => {
                   type="checkbox"
                   name="react"
                   id="react"
-                  onChange={changeHandler}
-                  checked={skills.react}
+                  onChange={checkedHandler}
+                  checked={false || skills.react}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -163,8 +171,8 @@ const Edit = ({ id }) => {
                   type="checkbox"
                   name="next"
                   id="next"
-                  onChange={changeHandler}
-                  checked={skills.next}
+                  onChange={checkedHandler}
+                  checked={false || skills.next}
                 />
               </div>
             </div>

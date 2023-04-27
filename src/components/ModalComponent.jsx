@@ -36,9 +36,9 @@ const ModalComponent = () => {
         id: getId(),
       });
       return;
-    // } else if (!e.target.checked) {
-    //   const skills = data.skills;
-    //   const newSkills = skills.map((skill) => skill === skills.includes(!e.target.name));
+      // } else if (!e.target.checked) {
+      //   const skills = data.skills;
+      //   const newSkills = skills.map((skill) => skill === skills.includes(!e.target.name));
     }
     // console.log(e);
     setData({
@@ -68,6 +68,12 @@ const ModalComponent = () => {
         handleClose();
         return;
       }
+      setData({
+        name: "",
+        lastName: "",
+        dateOfBirthDay: "",
+        skills: [],
+      });
     }
 
     localStorage.setItem("data", JSON.stringify({ users: [data] }));

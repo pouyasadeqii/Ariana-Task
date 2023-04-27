@@ -7,6 +7,7 @@ import Delete from "./Delete";
 
 const Home = () => {
   const { state, dispatch } = useContext(UserContext);
+  const len = state.users.length;
 
   useEffect(() => {
     if (localStorage.getItem("data")) {

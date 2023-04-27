@@ -12,9 +12,12 @@ const dataReducer = (state, action) => {
       return { users: [...users, action.payload] };
     case "firstTime":
       return action.payload;
-    case "update":
-      const userss = state.users;
-        return { users: [...userss, action.payload] };
+    case "delete":
+      // const userss = state.users;
+      return { users: action.payload };
+    case "edit":
+      // const userss = state.users;
+      return { users: action.payload };
     default:
       return state;
   }
