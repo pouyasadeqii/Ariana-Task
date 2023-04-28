@@ -23,11 +23,6 @@ ChartJS.register(
 const Chart = () => {
   const [userNames, setUserNames] = useState([]);
   const { state, dispatch } = useContext(UserContext);
-
-  // const [userData,setUserData]= useState({
-  //     label:"",
-  //     data: []
-  // })
   const skills = state.users.map((user) => user.skills.length);
 
   const labels = userNames;
@@ -57,10 +52,10 @@ const Chart = () => {
   };
 
   const styles = {
-    marginTop: "5rem",
+    marginTop: "2rem",
     display: "flex",
     justifyContent: "center",
-    padding: "10rem",
+    padding: "2rem 10rem",
   };
 
   useEffect(() => {
