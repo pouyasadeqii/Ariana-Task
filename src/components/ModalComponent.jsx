@@ -14,7 +14,15 @@ const ModalComponent = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setData({
+      name: "",
+      lastName: "",
+      dateOfBirthDay: "",
+      skills: [],
+    });
+  };
   const handleShow = () => setShow(true);
 
   const getId = () => {
@@ -36,11 +44,16 @@ const ModalComponent = () => {
         id: getId(),
       });
       return;
-      // } else if (!e.target.checked) {
-      //   const skills = data.skills;
-      //   const newSkills = skills.map((skill) => skill === skills.includes(!e.target.name));
     }
-    // console.log(e);
+    // if (!e.target.checked) {
+    //   const skills = data.skills.map((skill) => skill !== e.target.value);
+    //   setData({
+    //     ...data,
+    //     skills: [...skills],
+    //     id: getId(),
+    //   });
+    //   return;
+    // }
     setData({
       ...data,
       [e.target.name]: e.target.value,
@@ -50,7 +63,6 @@ const ModalComponent = () => {
 
   const dispatchHandler = () => {
     // setData({ ...data, id: getId() });
-    console.log(data);
     if (
       data.dateOfBirthDay &&
       data.lastName &&
@@ -67,6 +79,8 @@ const ModalComponent = () => {
         );
         handleClose();
         return;
+      } else {
+        localStorage.setItem("data", JSON.stringify({ users: [data] }));
       }
       setData({
         name: "",
@@ -75,9 +89,9 @@ const ModalComponent = () => {
         skills: [],
       });
     }
-
-    localStorage.setItem("data", JSON.stringify({ users: [data] }));
     handleClose();
+    console.log(data);
+
   };
 
   // console.log(state);
@@ -98,6 +112,7 @@ const ModalComponent = () => {
               type="text"
               name="name"
               onChange={changeHandler}
+              required
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -107,6 +122,7 @@ const ModalComponent = () => {
               type="text"
               name="lastName"
               onChange={changeHandler}
+              required
             />
           </div>
           <div className="d-flex flex-column gap-3 ">
@@ -116,6 +132,7 @@ const ModalComponent = () => {
               type="date"
               name="dateOfBirthDay"
               onChange={changeHandler}
+              required
             />
           </div>
           <div className="d-flex flex-column gap-3 ">

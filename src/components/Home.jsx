@@ -34,7 +34,7 @@ const Home = () => {
         <tbody>
           {state.users.map((user) => {
             return (
-              <tr key={user.length}>
+              <tr key={user.id}>
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.lastName}</td>

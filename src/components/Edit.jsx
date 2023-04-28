@@ -69,8 +69,8 @@ const Edit = ({ id }) => {
     }
   };
 
-  console.log(skills);
-  console.log(updatedUser.skills);
+  // console.log(skills);
+  // console.log(updatedUser.skills);
 
   const dispatchHandler = () => {
     const filterdUser = state.users.filter((user) => user.id !== id);
