@@ -83,40 +83,53 @@ const Edit = ({ id }) => {
   // console.log(updatedUser.skills);
 
   const dispatchHandler = () => {
-    console.log("skills", skills);
-    const filterdUser = state.users.filter((user) => user.id !== id);
-    const selectedUser = state.users.find((user) => user.id === id);
+    const editedUsers = state.users.map((user) => {
+      if (user.id === id) {
+        
+        // user.name = updatedUser.name;
+        // user.lastName = updatedUser.lastName;
+        // user.dateOfBirthDay = updatedUser.dateOfBirthDay;
+        // user.skills = Object.keys(skills).filter((key) => skills[key] === true);
+        return {
+          ...updatedUser,
+          skills: Object.keys(skills).filter((key) => skills[key] === true),
+        };
+      }
+    });
+
+    console.log("edited users", editedUsers);
+    // console.log("skills", skills);
+    // const filterdUser = state.users.filter((user) => user.id !== id);
+    // const selectedUser = state.users.find((user) =>{
+    //   if ( user.id === id) {
+    //     user
+    //   }
+    // });
+    // console.log([
+    //   ...filterdUser,
+    //   {
+    //     ...selectedUser,
+    //     ...updatedUser,
+    //     skills: Object.keys(skills).filter((key) => skills[key] === true),
+    //   },
+    // ])
     // setUpdatedUser({
     //   ...updatedUser,
     //   id: selectedUser.id,
     //   skills: Object.keys(skills).filter((key) => skills[key] === true),
     // });
+
     dispatch({
       type: "edit",
-      payload: [
-        ...filterdUser,
-        {
-          ...selectedUser,
-          ...updatedUser,
-          skills: Object.keys(skills).filter((key) => skills[key] === true),
-        },
-      ],
+      payload: editedUsers,
     });
-    console.log("updated user", updatedUser);
     if (localStorage.getItem("data")) {
       const users = JSON.parse(localStorage.getItem("data"));
       // console.log(...users.users);
       localStorage.setItem(
         "data",
         JSON.stringify({
-          users: [
-            ...filterdUser,
-            {
-              ...selectedUser,
-              ...updatedUser,
-              skills: Object.keys(skills).filter((key) => skills[key] === true),
-            },
-          ],
+          users: editedUsers,
         })
       );
       handleClose();
