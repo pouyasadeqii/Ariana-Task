@@ -6,23 +6,24 @@ import { UserContext } from "../context/UsersDataContext";
 const Edit = ({ id }) => {
   const { state, dispatch } = useContext(UserContext);
   const [show, setShow] = useState(false);
-  const [allSkills, setAllSkills] = useState({
-    javascript: false,
-    react: false,
-    next: false,
-    html: false,
-  });
+
   const [updatedUser, setUpdatedUser] = useState({
     name: "",
     lastName: "",
     dateOfBirthDay: "",
     skills: [],
   });
+
   // selected user=========================
   const selectedUser = state.users.find((user) => user.id === id);
   // console.log(selectedUser);
 
-  const [skills, setSkills] = useState({});
+  const [skills, setSkills] = useState({
+    javascript: false,
+    next: false,
+    html: false,
+    react: false,
+  });
 
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -32,11 +33,11 @@ const Edit = ({ id }) => {
   };
 
   const getSkills = () => {
-    let skill = {};
+    let skill = { ...skills };
     for (let i of selectedUser.skills) {
       skill = { ...skill, [i]: true };
     }
-    setSkills(skill);
+    setSkills({ ...skills, ...skill });
   };
 
   const changeHandler = (e) => {
@@ -44,28 +45,37 @@ const Edit = ({ id }) => {
   };
 
   const checkedHandler = (e) => {
-    const userOldSkills = selectedUser.skills;
+    // const userOldSkills = selectedUser.skills;
+    // console.log('change', e.target.name, e.target.checked)
     if (e.target.checked) {
-      if (!updatedUser.skills.includes(e.target.name)) {
-        setSkills({ ...skills, [e.target.name]: true });
-        const skillsKeys = Object.keys(skills);
-        setUpdatedUser({
-          ...updatedUser,
-          skills: [...skillsKeys, e.target.name],
-        });
-      }
-      return;
-    } else if (!e.target.checked) {
+      // if (skills[e.target.name] === false) {
+      setSkills({ ...skills, [e.target.name]: true });
+
+      // setUpdatedUser({
+      //   ...updatedUser,
+      //   skills:  Object.keys(skills).filter(key => skills[key] === true),
+      // });
+      // }
+    }
+
+    if (!e.target.checked) {
       const userSkills = { ...skills };
-      delete userSkills[e.target.name];
+      // console.log('1',userSkills)
+      // delete userSkills[e.target.name];
+      userSkills[e.target.name] = !userSkills[e.target.name];
+      // console.log('2',userSkills)
       setSkills(userSkills);
       const allSkills = updatedUser.skills;
+      // console.log('3',userSkills)
+      // const skillsKeys = Object.keys(skills);
+
       const newSkills = allSkills.filter((skill) => skill !== e.target.name);
-      setUpdatedUser({
-        ...updatedUser,
-        skills: newSkills,
-      });
-      return;
+      // console.log('4',userSkills)
+      // setUpdatedUser({
+      //   ...updatedUser,
+      //   skills: newSkills,
+      // });
+      // console.log(skills);
     }
   };
 
@@ -73,16 +83,41 @@ const Edit = ({ id }) => {
   // console.log(updatedUser.skills);
 
   const dispatchHandler = () => {
+    console.log("skills", skills);
     const filterdUser = state.users.filter((user) => user.id !== id);
-    setUpdatedUser({ ...updatedUser, id: selectedUser.id });
-    dispatch({ type: "edit", payload: [...filterdUser, updatedUser] });
-    console.log(updatedUser);
+    const selectedUser = state.users.find((user) => user.id === id);
+    // setUpdatedUser({
+    //   ...updatedUser,
+    //   id: selectedUser.id,
+    //   skills: Object.keys(skills).filter((key) => skills[key] === true),
+    // });
+    dispatch({
+      type: "edit",
+      payload: [
+        ...filterdUser,
+        {
+          ...selectedUser,
+          ...updatedUser,
+          skills: Object.keys(skills).filter((key) => skills[key] === true),
+        },
+      ],
+    });
+    console.log("updated user", updatedUser);
     if (localStorage.getItem("data")) {
       const users = JSON.parse(localStorage.getItem("data"));
-      console.log(...users.users);
+      // console.log(...users.users);
       localStorage.setItem(
         "data",
-        JSON.stringify({ users: [...filterdUser, updatedUser] })
+        JSON.stringify({
+          users: [
+            ...filterdUser,
+            {
+              ...selectedUser,
+              ...updatedUser,
+              skills: Object.keys(skills).filter((key) => skills[key] === true),
+            },
+          ],
+        })
       );
       handleClose();
       return;
@@ -91,7 +126,7 @@ const Edit = ({ id }) => {
     // localStorage.setItem("data", JSON.stringify({ users: [data] }));
     // handleClose();
   };
-
+  // console.log(skills);
   return (
     <div>
       <Button variant="warning" onClick={handleShow}>
@@ -142,7 +177,7 @@ const Edit = ({ id }) => {
                   name="html"
                   id="html"
                   onChange={checkedHandler}
-                  checked={false || skills.html}
+                  checked={skills.html}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -152,7 +187,7 @@ const Edit = ({ id }) => {
                   name="javascript"
                   id="javascript"
                   onChange={checkedHandler}
-                  checked={false || skills.javascript}
+                  checked={skills.javascript}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -162,7 +197,7 @@ const Edit = ({ id }) => {
                   name="react"
                   id="react"
                   onChange={checkedHandler}
-                  checked={false || skills.react}
+                  checked={skills.react}
                 />
               </div>
               <div className="d-flex gap-2">
@@ -172,7 +207,7 @@ const Edit = ({ id }) => {
                   name="next"
                   id="next"
                   onChange={checkedHandler}
-                  checked={false || skills.next}
+                  checked={skills.next}
                 />
               </div>
             </div>

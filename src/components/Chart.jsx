@@ -21,18 +21,18 @@ ChartJS.register(
 );
 
 const Chart = () => {
-  const [userNames, setUserNames] = useState([]);
+  // const [userNames, setUserNames] = useState([]);
   const { state, dispatch } = useContext(UserContext);
-  const skills = state.users.map((user) => user.skills.length);
+  const [skillCount, setSkillCount] = useState([]);
 
-  const labels = userNames;
+  const labels = ["HTML", "JAVASCRIPT", "REACT", "NEXT"];
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Skills",
-        data: [...skills, 5, 6],
+        label: "User",
+        data: [2, 3, 1, 4, 5, 6, 7],
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
@@ -59,11 +59,40 @@ const Chart = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("data")) {
-      const data = JSON.parse(localStorage.getItem("data"));
-      const names = data.users.map((user) => `${user.name} ${user.lastName}`);
-      setUserNames([...names]);
-    }
+    const getData = async () => {
+      const skillsName = {
+        html: 0,
+        javascript: 0,
+        next: 0,
+        react: 0,
+      };
+      if (localStorage.getItem("data")) {
+        const data = JSON.parse(localStorage.getItem("data"));
+        dispatch({ type: "firstTime", payload: data });
+        // const names = data.users.map((user) => `${user.name} ${user.lastName}`);
+        // setUserNames([...names]);
+        const total = await data.users.map((user) => {
+          if (user.skills.includes("html")) {
+            skillsName.html += 1;
+          } else if (user.skills.includes("javascript")) {
+            skillsName.javascript += 1;
+          } else if (user.skills.includes("react")) {
+            skillsName.react += 1;
+          } else if (user.skills.includes("next")) {
+            skillsName.next += 1;
+          }
+        });
+      }
+      console.log(skillsName);
+      setSkillCount([
+        skillsName.html,
+        skillsName.javascript,
+        skillsName.react,
+        skillsName.next,
+      ]);
+    };
+
+    getData();
   }, [state.users.length]);
 
   return (
