@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Button, ModalFooter } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { UserContext } from "../context/UsersDataContext";
@@ -11,6 +11,8 @@ const CreateUser = () => {
     dateOfBirthDay: "",
     skills: [],
   });
+
+  const spanRef = useRef();
 
   const [show, setShow] = useState(false);
 
@@ -45,15 +47,6 @@ const CreateUser = () => {
       });
       return;
     }
-    // if (!e.target.checked) {
-    //   const skills = data.skills.map((skill) => skill !== e.target.value);
-    //   setData({
-    //     ...data,
-    //     skills: [...skills],
-    //     id: getId(),
-    //   });
-    //   return;
-    // }
     setData({
       ...data,
       [e.target.name]: e.target.value,
@@ -63,6 +56,11 @@ const CreateUser = () => {
 
   const dispatchHandler = () => {
     // setData({ ...data, id: getId() });
+    if (!data.dateOfBirthDay || !data.lastName || !data.name || !data.skills.length) {
+      console.log(spanRef.current.classList);
+      spanRef.current.classList.add("d-block");
+      return;
+    }
     if (
       data.dateOfBirthDay &&
       data.lastName &&
@@ -100,10 +98,10 @@ const CreateUser = () => {
         width: "100%",
         height: "100vh",
         display: "flex",
-        flexDirection : "column",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        gap:"1rem"
+        gap: "1rem",
       }}
     >
       <h1>برای ایجاد کاربر جدید کلیک کنید</h1>
@@ -114,6 +112,12 @@ const CreateUser = () => {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>کاربر جدید</Modal.Title>
+          <span
+            className="text-danger d-inline-block ms-5 d-none"
+            ref={spanRef}
+          >
+            پر کردن همه فیلد اجباری است
+          </span>
         </Modal.Header>
         <Modal.Body className="d-flex flex-column gap-4">
           <div className="d-flex flex-column gap-3 ">

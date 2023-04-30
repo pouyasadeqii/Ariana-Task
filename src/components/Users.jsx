@@ -6,7 +6,7 @@ import Delete from "./Delete";
 
 const Users = () => {
   const { state, dispatch } = useContext(UserContext);
-  const len = state.users.length;
+
 
   useEffect(() => {
     if (localStorage.getItem("data")) {
@@ -14,7 +14,7 @@ const Users = () => {
       dispatch({ type: "firstTime", payload: data });
     }
   }, []);
-  //   console.log(users);
+    console.log(state);
 
   return (
     <Container className="my-5">
@@ -38,7 +38,11 @@ const Users = () => {
                 <td>{user.name}</td>
                 <td>{user.lastName}</td>
                 <td>{2023 - user.dateOfBirthDay.slice(0, 4)}</td>
-                <td>{user.skills.map((skill) => `${skill} `)}</td>
+                <td>
+                  {user.skills.map((skill) => (
+                    <span className="badge bg-secondary ms-1 p-2">{skill.toUpperCase()}</span>
+                  ))}
+                </td>
                 <td>
                   <Edit id={user.id} />
                 </td>

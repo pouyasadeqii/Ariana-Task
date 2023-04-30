@@ -32,7 +32,7 @@ const Chart = () => {
     datasets: [
       {
         label: "User",
-        data: [2, 3, 1, 4, 5, 6, 7],
+        data: [...skillCount, 5, 6, 7],
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
     ],
@@ -58,6 +58,8 @@ const Chart = () => {
     padding: "2rem 10rem",
   };
 
+  // console.log(skillCount);
+
   useEffect(() => {
     const getData = async () => {
       const skillsName = {
@@ -71,19 +73,21 @@ const Chart = () => {
         dispatch({ type: "firstTime", payload: data });
         // const names = data.users.map((user) => `${user.name} ${user.lastName}`);
         // setUserNames([...names]);
-        const total = await data.users.map((user) => {
-          if (user.skills.includes("html")) {
-            skillsName.html += 1;
-          } else if (user.skills.includes("javascript")) {
-            skillsName.javascript += 1;
-          } else if (user.skills.includes("react")) {
-            skillsName.react += 1;
-          } else if (user.skills.includes("next")) {
-            skillsName.next += 1;
-          }
+        await data.users.forEach((user) => {
+          user.skills.forEach(item => {
+            if (item === "html") {
+              skillsName.html += 1;
+            }else if (item === "javascript") {
+              skillsName.javascript += 1;
+            }else if (item === "react") {
+              skillsName.react += 1;
+            }else if (item === "next") {
+              skillsName.next += 1;
+            }
+          })
         });
       }
-      console.log(skillsName);
+      // console.log(skillsName);
       setSkillCount([
         skillsName.html,
         skillsName.javascript,

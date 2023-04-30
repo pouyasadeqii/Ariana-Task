@@ -16,7 +16,6 @@ const Edit = ({ id }) => {
 
   // selected user=========================
   const selectedUser = state.users.find((user) => user.id === id);
-  // console.log(selectedUser);
 
   const [skills, setSkills] = useState({
     javascript: false,
@@ -45,83 +44,32 @@ const Edit = ({ id }) => {
   };
 
   const checkedHandler = (e) => {
-    // const userOldSkills = selectedUser.skills;
-    // console.log('change', e.target.name, e.target.checked)
     if (e.target.checked) {
-      // if (skills[e.target.name] === false) {
       setSkills({ ...skills, [e.target.name]: true });
-
-      // setUpdatedUser({
-      //   ...updatedUser,
-      //   skills:  Object.keys(skills).filter(key => skills[key] === true),
-      // });
-      // }
     }
 
     if (!e.target.checked) {
       const userSkills = { ...skills };
-      // console.log('1',userSkills)
-      // delete userSkills[e.target.name];
       userSkills[e.target.name] = !userSkills[e.target.name];
-      // console.log('2',userSkills)
       setSkills(userSkills);
       const allSkills = updatedUser.skills;
-      // console.log('3',userSkills)
-      // const skillsKeys = Object.keys(skills);
-
-      const newSkills = allSkills.filter((skill) => skill !== e.target.name);
-      // console.log('4',userSkills)
-      // setUpdatedUser({
-      //   ...updatedUser,
-      //   skills: newSkills,
-      // });
-      // console.log(skills);
     }
   };
 
-  // console.log(skills);
-  // console.log(updatedUser.skills);
-
   const dispatchHandler = () => {
-    const editedUsers = state.users.map((user) => {
-      if (user.id === id) {
-        
-        // user.name = updatedUser.name;
-        // user.lastName = updatedUser.lastName;
-        // user.dateOfBirthDay = updatedUser.dateOfBirthDay;
-        // user.skills = Object.keys(skills).filter((key) => skills[key] === true);
+    const newData = state.users.map((item) => {
+      if (item.id === id) {
         return {
+          ...item,
           ...updatedUser,
           skills: Object.keys(skills).filter((key) => skills[key] === true),
         };
-      }
+      } else return item;
     });
-
-    console.log("edited users", editedUsers);
-    // console.log("skills", skills);
-    // const filterdUser = state.users.filter((user) => user.id !== id);
-    // const selectedUser = state.users.find((user) =>{
-    //   if ( user.id === id) {
-    //     user
-    //   }
-    // });
-    // console.log([
-    //   ...filterdUser,
-    //   {
-    //     ...selectedUser,
-    //     ...updatedUser,
-    //     skills: Object.keys(skills).filter((key) => skills[key] === true),
-    //   },
-    // ])
-    // setUpdatedUser({
-    //   ...updatedUser,
-    //   id: selectedUser.id,
-    //   skills: Object.keys(skills).filter((key) => skills[key] === true),
-    // });
 
     dispatch({
       type: "edit",
-      payload: editedUsers,
+      payload: newData,
     });
     if (localStorage.getItem("data")) {
       const users = JSON.parse(localStorage.getItem("data"));
@@ -129,17 +77,14 @@ const Edit = ({ id }) => {
       localStorage.setItem(
         "data",
         JSON.stringify({
-          users: editedUsers,
+          users: newData,
         })
       );
       handleClose();
       return;
     }
-
-    // localStorage.setItem("data", JSON.stringify({ users: [data] }));
-    // handleClose();
   };
-  // console.log(skills);
+
   return (
     <div>
       <Button variant="warning" onClick={handleShow}>
